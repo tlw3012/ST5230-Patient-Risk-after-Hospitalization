@@ -1,14 +1,4 @@
-"""
-Text embedding utilities based on BioClinical DistilBERT (or similar models).
-
-This module encapsulates logic that previously lived across several
-notebooks (P4, CP4, CP4-1) so that text embeddings can be computed in a
-consistent and reusable way.
-
-Only low-risk, behavior-preserving helpers are implemented here as part
-of the pilot migration. The higher-level orchestration remains in the
-notebooks for now.
-"""
+"""Helpers for computing text embeddings with DistilClinicalBERT and ClinicalBERT."""
 
 from __future__ import annotations
 
@@ -48,6 +38,25 @@ def load_distilclinicalbert(
     if device is not None:
         # Preserve simple, explicit device handling; callers are
         # responsible for passing a valid device string.
+        model = model.to(device)
+    return tokenizer, model
+
+
+def load_clinicalbert(
+    model_name: str = "emilyalsentzer/Bio_ClinicalBERT",
+    device: Optional[str] = None,
+) -> Tuple[AutoTokenizer, AutoModel]:
+    """
+    Load the full Bio_ClinicalBERT tokenizer and model.
+
+    This mirrors :func:`load_distilclinicalbert` but uses the
+    non-distilled ClinicalBERT variant often referred to as
+    \"ClinicalBERT\" in the project notes.
+    """
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModel.from_pretrained(model_name)
+    if device is not None:
         model = model.to(device)
     return tokenizer, model
 
@@ -245,4 +254,132 @@ def encode_document(
     blocks = add_special_tokens_to_blocks(blocks, tokenizer)
     block_embeddings = extract_block_embeddings(blocks, model, device=device)
     return reduce_block_embeddings_to_document_vector(block_embeddings)
+
+
+def encode_document_clinicalbert_truncated(
+    text: str,
+    tokenizer,
+    model,
+    *,
+    max_length: int = 512,
+    device: Optional[str] = None,
+) -> np.ndarray:
+    """
+    Encode a document with ClinicalBERT using simple truncation.
+
+    This variant keeps only the first ``max_length`` tokens (including
+    special tokens) and performs a single forward pass through the
+    model, then averages over the token dimension to obtain a single
+    document vector.
+
+    It is intended to match the \"ClinicalBERT – Truncated\" variant
+    used during exploratory experiments.
+    """
+
+    # Local import to avoid hard dependency when not used.
+    import torch
+
+    encoded = tokenizer(
+        text,
+        padding="max_length",
+        truncation=True,
+        max_length=max_length,
+        return_tensors="pt",
+    )
+    input_ids = encoded["input_ids"]
+    attention_mask = encoded.get("attention_mask", None)
+
+    if device is not None:
+        input_ids = input_ids.to(device)
+        if attention_mask is not None:
+            attention_mask = attention_mask.to(device)
+
+    with torch.no_grad():
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        hidden = outputs.last_hidden_state  # [batch, seq_len, hidden]
+
+    # Mean over tokens -> [batch, hidden], then squeeze batch.
+    doc_vec = hidden.mean(dim=1).squeeze(0).cpu().numpy()
+    return doc_vec
+
+
+def encode_document_clinicalbert_sliding_window(
+    text: str,
+    tokenizer,
+    model,
+    *,
+    window_size: int = 256,
+    stride: int = 128,
+    device: Optional[str] = None,
+) -> np.ndarray:
+    """
+    Encode a document with ClinicalBERT using a sliding window.
+
+    This implements a \"ClinicalBERT – Sliding Window\" variant:
+
+    - tokenize the entire document without truncation
+    - create overlapping windows of length ``window_size`` (on token ids)
+      with step ``stride``
+    - wrap each window with [CLS] and [SEP]
+    - run the model on all windows (batched)
+    - mean-pool over tokens within each window, then mean over windows
+      to obtain a single document vector
+
+    The defaults (``window_size=256``, ``stride=128``) are chosen as a
+    reasonable balance between coverage and computation, and can be
+    adjusted by callers.
+    """
+
+    import torch
+
+    # Tokenize once without truncation.
+    encoded = tokenizer(
+        text,
+        padding=False,
+        truncation=False,
+        return_tensors="pt",
+    )
+    input_ids = encoded["input_ids"].squeeze().tolist()
+
+    if not input_ids:
+        raise ValueError("Cannot encode empty text with ClinicalBERT.")
+
+    cls_id = tokenizer.cls_token_id
+    sep_id = tokenizer.sep_token_id
+    pad_id = tokenizer.pad_token_id
+
+    # Build overlapping windows on the token-id sequence.
+    windows: List[List[int]] = []
+    effective_window = max(window_size - 2, 1)  # leave room for CLS/SEP
+    n_tokens = len(input_ids)
+
+    start = 0
+    while start < n_tokens:
+        end = min(start + effective_window, n_tokens)
+        chunk = input_ids[start:end]
+        # Pad within the window if needed.
+        if len(chunk) < effective_window:
+            chunk = chunk + [pad_id] * (effective_window - len(chunk))
+        # Add CLS / SEP around the chunk.
+        window_ids = [cls_id] + chunk + [sep_id]
+        windows.append(window_ids)
+        start += stride
+
+    # Stack windows into a batch.
+    window_tensor = torch.tensor(windows)  # [num_windows, seq_len]
+    attention_mask = (window_tensor != pad_id).long()
+
+    if device is not None:
+        window_tensor = window_tensor.to(device)
+        attention_mask = attention_mask.to(device)
+
+    with torch.no_grad():
+        outputs = model(input_ids=window_tensor, attention_mask=attention_mask)
+        hidden = outputs.last_hidden_state  # [num_windows, seq_len, hidden]
+
+    # Mean over tokens for each window, then mean over windows.
+    window_vecs = hidden.mean(dim=1)  # [num_windows, hidden]
+    doc_vec = window_vecs.mean(dim=0).cpu().numpy()  # [hidden]
+    return doc_vec
+
 

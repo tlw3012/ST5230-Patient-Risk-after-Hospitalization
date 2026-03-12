@@ -1,11 +1,4 @@
-"""
-Pipelines for running modeling experiments.
-
-Only a very small, behaviour-preserving helper is implemented here for
-now, mirroring patterns already present in several notebooks. The
-longer-term intent is to grow this into a central place for orchestrated
-experiments.
-"""
+"""Small helpers for wiring modeling experiments (train/test + metrics)."""
 
 from __future__ import annotations
 

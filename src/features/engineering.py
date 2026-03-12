@@ -1,16 +1,4 @@
-"""
-General feature engineering helpers.
-
-This module is intended to host utilities for:
-
-- column selection and transformation for numerical features
-- normalization and scaling (e.g., z-score)
-- combining numerical and text-based features into a single design
-  matrix suitable for modeling
-
-As part of the pilot migration, only a small set of low-risk helpers
-for working with text embedding columns are implemented here.
-"""
+"""Feature-engineering helpers, especially for text embedding columns."""
 
 from __future__ import annotations
 

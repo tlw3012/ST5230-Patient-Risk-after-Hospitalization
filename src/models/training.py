@@ -1,10 +1,4 @@
-"""
-Generic training helpers used in CP* and P* notebooks.
-
-This module centralises low-risk pieces of model-training boilerplate
-such as the standard train/test split configuration. Model-specific
-construction lives in modules like ``logistic`` and ``tree_based``.
-"""
+"""Generic training helpers (e.g., a standard train/test split)."""
 
 from __future__ import annotations
 

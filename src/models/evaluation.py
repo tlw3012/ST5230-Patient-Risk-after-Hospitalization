@@ -1,16 +1,4 @@
-"""
-Model evaluation utilities used across CP* and P* notebooks.
-
-The goal of this module is to centralise low-risk, repeated logic for:
-
-- computing standard classification metrics (accuracy, AUROC, reports)
-- optionally computing mean squared error (for binary setups)
-- printing a consistent summary during experimentation
-
-This keeps notebooks readable while avoiding copy/paste of the same
-evaluation code blocks. Behaviour is intentionally very close to the
-original notebook snippets.
-"""
+"""Common model-evaluation helpers (accuracy, AUROC, classification reports, optional MSE)."""
 
 from __future__ import annotations
 

@@ -1,11 +1,4 @@
-"""
-Logistic regression model helpers.
-
-This module encapsulates small convenience wrappers around
-``sklearn.linear_model.LogisticRegression`` used by multiple notebooks.
-The intent is *not* to hide hyperparameters, but to avoid repeating
-boilerplate when constructing and fitting models.
-"""
+"""Small convenience wrappers around sklearn's LogisticRegression."""
 
 from __future__ import annotations
 

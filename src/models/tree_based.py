@@ -1,10 +1,4 @@
-"""
-Tree-based model helpers (RandomForest, Gradient Boosting, XGBoost,
-LightGBM).
-
-Only light-weight helpers that match existing notebook usage are
-implemented here to avoid changing experimental behaviour.
-"""
+"""Light-weight helpers for tree-based models (currently RandomForestClassifier)."""
 
 from __future__ import annotations
 
