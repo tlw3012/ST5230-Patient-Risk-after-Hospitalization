@@ -1,10 +1,8 @@
 
 # Patient-Risk-after-Hospitalization
-A multimodal EHR prediction pipeline integrating vital signs and clinical notes via ClinicalBERT embeddings and ensemble ML models.
 
-# Clinical Text & Predictions — ST5230 Project
-
-Course project repository for **ST5230**: pipelines for clinical note embedding (BioClinical DistilBERT), feature engineering, and prediction tasks (regression/classification) using structured and text-derived features.
+Course project repository for **ST5230**: A multimodal EHR prediction pipeline integrating vital signs and clinical notes via ClinicalBERT embeddings and ensemble ML models.
+pipelines for clinical note embedding (BioClinical DistilBERT), feature engineering, and prediction tasks (regression/classification) using structured and text-derived features.
 
 ---
 
