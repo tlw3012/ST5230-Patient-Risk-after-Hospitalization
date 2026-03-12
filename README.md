@@ -15,13 +15,7 @@ The repository covers:
 
 ## Problem Statement
 
-Clinical notes contain rich information that is often not captured by structured variables alone. This project explores a multimodal workflow for combining note embeddings with structured EHR data to predict outcomes such as:
-
-- in-hospital death
-- severity
-- mortality-related risk
-- acuity
-- other regression-style clinical targets
+Clinical notes contain rich information that is often not captured by structured variables alone. This project explores a multimodal workflow for combining note embeddings with structured EHR data to predict outcomes such as in/out-hospital death, severity, mortality-related risk, acuity and so on.
 
 The goal is to build a reusable and reasonably modular prediction pipeline that can be adapted to similar clinical modeling settings.
 
@@ -38,10 +32,12 @@ The project includes logistic and tree-based models for multiple prediction task
 
 ## Prediction Tasks
 
-| Task | Description | 
-|---|---|---|
-| Death | Binary prediction of in-hospital death | CP5 |
-| Severity | Severity-related target | CP6 |
+```text
+.
+| Task | Description |
+|---|---|
+| Death | Binary prediction of in-hospital death |
+| Severity | Severity-related target |
 | Mortality risk | Mortality-related target | 
 | Acuity | Acuity / triage-related target |
 
