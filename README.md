@@ -32,14 +32,12 @@ The project includes logistic and tree-based models for multiple prediction task
 
 ## Prediction Tasks
 
-```text
-.
 | Task | Description |
 |---|---|
-| Death | Binary prediction of in-hospital death |
-| Severity | Severity-related target |
-| Mortality risk | Mortality-related target | 
-| Acuity | Acuity / triage-related target |
+| Death | Binary prediction of in-hospital mortality |
+| Severity | Prediction of disease severity |
+| Mortality Risk | Prediction of mortality-related risk |
+| Acuity | Prediction of patient acuity / triage level |
 
 ## Repository Structure
 
