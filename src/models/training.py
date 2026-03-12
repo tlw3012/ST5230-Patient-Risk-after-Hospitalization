@@ -1,13 +1,40 @@
 """
-Generic training pipelines for supervised models.
+Generic training helpers used in CP* and P* notebooks.
 
-This module will provide:
-- a unified `train_model` style interface that accepts a model
-  specification, feature matrix, and labels
-- optional support for basic hyperparameter sweeps or cross-validation
-- simple hooks for logging metrics and saving trained models
-
-Model-specific details (e.g., how to construct a LogisticRegression
-instance) will live in dedicated modules such as `logistic.py`.
+This module centralises low-risk pieces of model-training boilerplate
+such as the standard train/test split configuration. Model-specific
+construction lives in modules like ``logistic`` and ``tree_based``.
 """
+
+from __future__ import annotations
+
+from typing import Any, Tuple
+
+from sklearn.model_selection import train_test_split
+
+
+def standard_train_test_split(
+    X,
+    y,
+    *,
+    test_size: float = 0.2,
+    random_state: int = 5230,
+    stratify: Any = None,
+) -> Tuple[Any, Any, Any, Any]:
+    """
+    Perform a train/test split with the defaults used throughout
+    the notebooks.
+
+    This is a thin wrapper around :func:`sklearn.model_selection.
+    train_test_split` that simply encodes the project-wide defaults
+    (``test_size=0.2``, ``random_state=5230``).
+    """
+
+    return train_test_split(
+        X,
+        y,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=stratify,
+    )
 
