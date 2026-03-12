@@ -1,0 +1,60 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Python bytecode / cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# VS Code / Cursor
+.vscode/
+.cursor/
+
+# OS / editor swap
+*.swp
+*.swo
+*~
+
+# Data / outputs (keep repo clean for GitHub)
+data/
+datasets/
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.sqlite
+*.db
+*.csv
+*.tsv
+*.xlsx
+
+# Figures / logs
+logs/
+*.log
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.pdf
+
