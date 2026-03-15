@@ -8,15 +8,7 @@ from sklearn.linear_model import LogisticRegression
 
 
 def create_logistic_regression(**kwargs: Any) -> LogisticRegression:
-    """
-    Create a :class:`LogisticRegression` instance with the provided
-    keyword arguments.
-
-    Notebooks can pass exactly the same hyperparameters they used
-    previously, while centralising the constructor location so that
-    future tweaks are easier to audit.
-    """
-
+    """Build LogisticRegression with given kwargs."""
     return LogisticRegression(**kwargs)
 
 
@@ -25,18 +17,7 @@ def fit_logistic_regression(
     y,
     **kwargs: Any,
 ) -> LogisticRegression:
-    """
-    Convenience helper that constructs and fits a logistic regression
-    model in one call.
-
-    Parameters
-    ----------
-    X, y
-        Training features and labels.
-    **kwargs
-        Keyword arguments forwarded to :func:`create_logistic_regression`.
-    """
-
+    """Create and fit LogisticRegression in one call."""
     model = create_logistic_regression(**kwargs)
     model.fit(X, y)
     return model

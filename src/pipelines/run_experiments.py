@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Tuple
 
+from src.config.settings import RANDOM_STATE, TEST_SIZE
 from src.models.evaluation import (
     BinaryClassificationMetrics,
     print_binary_classification_summary,
@@ -16,23 +17,11 @@ def run_binary_experiment(
     X,
     y,
     *,
-    test_size: float = 0.2,
-    random_state: int = 5230,
+    test_size: float = TEST_SIZE,
+    random_state: int = RANDOM_STATE,
     compute_mse: bool = False,
 ) -> Tuple[Any, Any, Any, Any, Any, BinaryClassificationMetrics]:
-    """
-    Run a single binary-classification experiment:
-
-    - split ``X, y`` into train/test
-    - fit the provided model
-    - compute standard metrics (accuracy, AU-ROC, optional MSE)
-    - print a summary
-
-    This is a thin wrapper around logic that previously lived in
-    multiple notebooks; it does **not** make any assumptions about how
-    features or labels are constructed.
-    """
-
+    """Split X,y, fit model, print metrics; return X_train, X_test, y_train, y_test, model, metrics."""
     X_train, X_test, y_train, y_test = standard_train_test_split(
         X,
         y,
@@ -42,11 +31,9 @@ def run_binary_experiment(
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
-    # Many classifiers used in the notebooks expose predict_proba.
     y_proba = None
     if hasattr(model, "predict_proba"):
         proba = model.predict_proba(X_test)
-        # Assume binary classification when 2 columns are present.
         if proba.ndim == 2 and proba.shape[1] >= 2:
             y_proba = proba[:, 1]
 

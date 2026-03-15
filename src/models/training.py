@@ -6,24 +6,18 @@ from typing import Any, Tuple
 
 from sklearn.model_selection import train_test_split
 
+from src.config.settings import RANDOM_STATE, TEST_SIZE
+
 
 def standard_train_test_split(
     X,
     y,
     *,
-    test_size: float = 0.2,
-    random_state: int = 5230,
+    test_size: float = TEST_SIZE,
+    random_state: int = RANDOM_STATE,
     stratify: Any = None,
 ) -> Tuple[Any, Any, Any, Any]:
-    """
-    Perform a train/test split with the defaults used throughout
-    the notebooks.
-
-    This is a thin wrapper around :func:`sklearn.model_selection.
-    train_test_split` that simply encodes the project-wide defaults
-    (``test_size=0.2``, ``random_state=5230``).
-    """
-
+    """Train/test split with project defaults from config.settings."""
     return train_test_split(
         X,
         y,

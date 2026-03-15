@@ -1,15 +1,4 @@
-"""Entry point for running a simple end-to-end modeling flow without notebooks.
-
-This script shows how the project modules fit together:
-
-- load a pre-built feature table from CSV
-- split into train / test
-- train a logistic regression model
-- evaluate with common metrics
-
-It is intentionally generic: it does not hard-code label definitions or
-feature selection rules (those still live in notebooks or calling code).
-"""
+"""CLI entry: load features CSV, train logistic model, print metrics (no notebooks)."""
 
 from __future__ import annotations
 
@@ -30,21 +19,7 @@ def run_logistic_pipeline(
     *,
     drop_columns: Sequence[str] = (),
 ) -> BinaryClassificationMetrics:
-    """
-    Run a single logistic-regression experiment from a features CSV.
-
-    Parameters
-    ----------
-    features_path:
-        Path to a CSV file containing both features and the label
-        column. This is typically produced by a notebook or a dedicated
-        feature-building step.
-    label_column:
-        Name of the target column in the CSV.
-    drop_columns:
-        Optional columns to drop before modeling (e.g. IDs).
-    """
-
+    """Run one logistic experiment from a features CSV; returns metrics."""
     df = pd.read_csv(features_path)
 
     if label_column not in df.columns:
@@ -72,9 +47,7 @@ def run_logistic_pipeline(
 
 
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Run a simple logistic-regression experiment from a features CSV.",
-    )
+    parser = argparse.ArgumentParser(description="Logistic experiment from features CSV.")
     parser.add_argument(
         "--features-path",
         required=True,
@@ -101,8 +74,6 @@ def main() -> None:
         label_column=args.label_column,
         drop_columns=args.drop_column,
     )
-    # `run_binary_experiment` already prints a summary; here we just show
-    # a compact dict for quick inspection or logging.
     print("\nSummary metrics:", metrics.as_dict())
 
 

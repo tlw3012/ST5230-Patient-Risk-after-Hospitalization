@@ -1,12 +1,7 @@
-"""
-Global settings and simple configuration.
+"""Project-wide constants and simple config (e.g. random seed, test size)."""
 
-This module will host:
-- project-wide constants (e.g., default random seeds, test sizes)
-- simple flags controlling optional behaviors in pipelines
-- helper functions for reading lightweight configuration files
+from __future__ import annotations
 
-Complex configuration management is intentionally out of scope; the goal
-is to keep this module minimal and easy to understand.
-"""
-
+RANDOM_STATE: int = 5230
+TEST_SIZE: float = 0.2
+DEFAULT_BLOCK_SIZE: int = 510

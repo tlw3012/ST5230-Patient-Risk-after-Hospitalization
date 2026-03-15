@@ -1,13 +1,13 @@
-"""
-Path configuration utilities.
+"""Path helpers for raw data, cleaned outputs, and model artifacts (project-relative)."""
 
-This module will define helper functions and constants for:
-- locating raw data directories (e.g., hospital, ED, ICU, notes)
-- locating intermediate data outputs (cleaned CSV and PKL files)
-- locating model artifacts and reports
+from __future__ import annotations
 
-The implementation will intentionally avoid hard-coding machine-specific
-absolute paths such as Windows drive letters, and instead rely on
-project-relative locations and simple configuration.
-"""
+from pathlib import Path
 
+def project_root() -> Path:
+    """Project root (parent of src). Assumes this file lives in src/config/."""
+    return Path(__file__).resolve().parent.parent.parent
+
+def data_dir(name: str = "data") -> Path:
+    """Subdir under project root, e.g. data, data/raw, data/cleaned."""
+    return project_root() / name

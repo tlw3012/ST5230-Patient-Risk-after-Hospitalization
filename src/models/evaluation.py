@@ -16,13 +16,7 @@ from sklearn.metrics import (
 
 @dataclass
 class BinaryClassificationMetrics:
-    """
-    Container for common binary classification metrics.
-
-    This mirrors the information that was previously printed directly in
-    the notebooks (accuracy, AU-ROC, classification report, optional
-    mean squared error).
-    """
+    """Holds accuracy, auroc, classification_report str, optional mse."""
 
     accuracy: float
     auroc: Optional[float]
@@ -45,37 +39,18 @@ def evaluate_binary_classifier(
     *,
     compute_mse: bool = False,
 ) -> BinaryClassificationMetrics:
-    """
-    Compute standard binary-classification metrics.
-
-    Parameters
-    ----------
-    y_true, y_pred
-        True and predicted labels.
-    y_proba
-        Optional array of predicted probabilities for the positive
-        class. If provided, AU-ROC is computed as in the notebooks.
-    compute_mse
-        If True, also compute mean squared error between ``y_true`` and
-        ``y_pred`` (or ``y_proba`` when available), matching the
-        existing notebook behaviour.
-    """
-
+    """Compute accuracy, (optional) AUROC from y_proba, classification report, optional MSE."""
     acc = accuracy_score(y_true, y_pred)
     report = classification_report(y_true, y_pred)
 
     auroc: Optional[float]
     if y_proba is not None:
-        # Most notebooks use proba for the positive class, e.g.
-        # roc_auc_score(y_test, y_pred_prob).
         auroc = roc_auc_score(y_true, y_proba)
     else:
         auroc = None
 
     mse: Optional[float] = None
     if compute_mse:
-        # In existing notebooks, some experiments pass predicted labels,
-        # others pass probabilities; both are supported here.
         target = y_proba if y_proba is not None else y_pred
         mse = mean_squared_error(y_true, target)
 
@@ -95,18 +70,7 @@ def print_binary_classification_summary(
     compute_mse: bool = False,
     prefix: str = "",
 ) -> BinaryClassificationMetrics:
-    """
-    Print a human-readable summary and return the metrics object.
-
-    This function is intended for use inside notebooks as a direct
-    replacement for repeated print blocks such as:
-
-    - accuracy
-    - classification report
-    - AU-ROC score
-    - mean squared error
-    """
-
+    """Print accuracy, report, AU-ROC, (optional) MSE; return metrics."""
     metrics = evaluate_binary_classifier(
         y_true=y_true,
         y_pred=y_pred,
