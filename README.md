@@ -52,7 +52,6 @@ The project includes logistic and tree-based models for multiple prediction task
 │   ├── features/
 │   ├── models/
 │   └── pipelines/
-├── notebooks/
-│   └── archive/
-│       └── rag/
-└── *.ipynb
+└── notebooks/
+    └── *.ipynb
+ 
